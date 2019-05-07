@@ -1,0 +1,52 @@
+// app global css
+@import '~variables'
+
+.myBackGround  { 
+  background: url(../assets/bg.jpg) no-repeat center center fixed; 
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+
+.myfont
+  font-size 14px
+
+.myobj
+  font-size 14px
+  .q-input, .q-select, .q-option-group, .q-toggle, .q-datetime
+    padding-bottom 2px
+
+.docs-input
+  .q-if, .q-field, .q-uploader
+    /* margin 6px 0
+       margin-right 8px */
+    margin-top -3px
+    margin-right 3px
+  .q-field, .q-uploader
+    .q-if
+      margin 0
+  .q-field .q-uploader
+    margin 0
+  .caption:not(:first-child)
+    margin-top 40px
+  .dark-example
+    padding 5px 15px 15px
+    box-shadow $shadow-2
+    border-radius 2px
+
+.docs-tree p.caption:not(:first-of-type)
+  margin-top 38px
+
+hr.colored {
+  border: 0;   /* in order to override TWBS stylesheet */
+  height: 2px;
+
+  background: #ff0000;
+  background: -webkit-gradient(linear, left top, right bottom, color-stop(0%,#ff0000), color-stop(25%,#ffff00), color-stop(50%,#00ff00), color-stop(75%,#00ffff), color-stop(100%,#0000ff));
+  background: -webkit-linear-gradient(-45deg, #ff0000 0%,#ffff00 25%,#00ff00 50%,#00ffff 75%,#0000ff 100%);
+  background: -moz-linear-gradient(-45deg, #ff0000 0%, #ffff00 25%, #00ff00 50%, #00ffff 75%, #0000ff 100%);
+  background: -o-linear-gradient(-45deg, #ff0000 0%,#ffff00 25%,#00ff00 50%,#00ffff 75%,#0000ff 100%);
+  background: -ms-linear-gradient(-45deg, #ff0000 0%,#ffff00 25%,#00ff00 50%,#00ffff 75%,#0000ff 100%);
+  background: linear-gradient(-45deg, #ff0000 0%,#ffff00 25%,#00ff00 50%,#00ffff 75%,#0000ff 100%);
+}      
