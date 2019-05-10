@@ -8,7 +8,41 @@
 				:props="dataDetail">
 				
 			<div v-if=" (col.tipeGrid == 'act' ?  true : false) " style="max-width: 0px">
-				<q-btn round dense outline icon="receipt" color="primary" >
+				
+				<q-btn 
+					v-if=" (frmType === 'grd' ?  true : false) " 
+					round dense outline icon="receipt" color="secondary" >
+				  <q-popover>
+		            <q-list link separator class="scroll" style="min-width: 100px">
+		              <q-item v-show="myGrid.Action.toUpperCase().indexOf('E') == -1 ? false : true" 
+		              	v-close-overlay
+		              	@click.native="myGrid.grdAction({mode:'2', data:dataDetail.row})" >
+		                <q-item-main label="EDIT"/>
+		                <q-item-side right icon="edit" color="secondary"/>
+		              </q-item>
+
+		              <q-item v-show="myGrid.Action.toUpperCase().indexOf('D') == -1 ? false : true" 
+		              	v-close-overlay
+		              	@click.native="myGrid.grdAction({mode:'3', data:dataDetail.row})">
+		                <q-item-main label="DELETE"/>
+		                <q-item-side right icon="delete" color="secondary"/>
+		              </q-item>
+
+		              <q-item v-show="myGrid.Action.toUpperCase().indexOf('L') == -1 ? false : true" 
+		              	v-close-overlay
+		              	@click.native="myGrid.grdAction({mode:'6', data:dataDetail.row})">
+		                <q-item-main label="VIEW DATA"/>
+		                <q-item-side right icon="assignment" color="secondary"/>
+		              </q-item>
+		            </q-list>					  
+				  </q-popover>
+
+				</q-btn>
+
+				<q-btn
+					v-else 
+					round dense outline icon="receipt" color="primary" >
+
 				  <q-popover>
 		            <q-list link separator class="scroll" style="min-width: 100px">
 	              
@@ -256,6 +290,7 @@
 				switch (this.frmType) {
 					case "popup" :
 						// console.log('ObjGrid_D - RowClick', this.myGrid);
+						// console.log('ObjGrid_D - row', row);
 						this.myGrid.PopSetValue({
 							flag: true, 
 							iy: typeof(row[this.myGrid.Grid.Keys]) === 'number' ?  

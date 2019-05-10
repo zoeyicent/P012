@@ -1,6 +1,7 @@
 // import something here
 import router from 'src/router'
 import store from 'src/store'
+import { date } from 'quasar'
 
 	export default {
 /*
@@ -285,7 +286,7 @@ import store from 'src/store'
 				data: CommandClick
 	    	});
 
-			await this.loadFormOject({
+			await this.loadFormObject({
 				form: form,
 				frmID: frmID,			
 				frmObj: 'frm' + frmID,	
@@ -295,7 +296,7 @@ import store from 'src/store'
 		},
 
 
-		async loadFormOject({form, frmID, frmObj, method}) {
+		async loadFormObject({form, frmID, frmObj, method}) {
 
 			await store.dispatch('App/doAppLoadObject', { 
 						frmID: frmID, 
@@ -334,6 +335,7 @@ import store from 'src/store'
 			/****************************************************/
 			/****************************************************/
 			var f = store.state.App.AppForms[frmID].Forms[frmObj];
+			// console.log('auth - clearFormObject ['+frmObj+'] ',f)
 			for (var k in f) {  // Begin Looping Object
 				var o = f[k];
 				// Begin Clear Value
@@ -357,6 +359,31 @@ import store from 'src/store'
 						o.Pops[o.PopCode+o.PopDesc].Value = '';
 						o.Value = '';
 						break;
+					case "grd":
+						o.Value = [];
+						break;
+                    case "dtp":
+						// o.Value = new Date()
+						/*
+							(1)
+							o.Value = "" ==> 2019-05-09T00:00:00.000+07:00
+							(2)
+							o.Value = New Date() ==> Fri May 17 2019 16:25:12 GMT+0700 (Western Indonesia Time)
+							(3)
+							o.Value = date.formatDate(new Date(),"DD-MMMM-YYYY")
+
+							(2) Membuat error saat GetValueObject
+							    Tapi dibuat seperti bawah ini jadi tidak error
+						*/
+						// o.Value = date.formatDate(new Date(),"DD-MMMM-YYYY")
+						var a = new Date();
+						var y = a.getFullYear();
+						var m = a.getMonth()+1;
+							m = m < 10 ? '0' + m : m;
+						var d = a.getDate();
+							d = d < 10 ? '0' + d : d;
+						o.Value = y+"-"+m+"-"+d
+						break;
 					case "num":
 						o.Value = '0';
 						break;
@@ -379,7 +406,13 @@ import store from 'src/store'
 				// End Set ReadOnly Mode (Merubah Background Object Jadi ABU-ABU )
 				
 				// Begin Reset Validation Vue
-				if (mode==="5") { 
+				/*
+					Sebelumnya Cuma mode=="5"
+					Saya tambah lagi mode=="1" 
+					buat saat ADD bisa reset error object text, combo dan lain sebagainya
+				*/
+				// if (mode==="5") { 
+				if (mode==="5" || mode==="1") { 
 					var pObj = ('pObj.Code').split('.');
 					var ObjForm = form.$findObj(form.$children, '$children', pObj, k);
 					if (ObjForm != undefined) {
@@ -446,6 +479,15 @@ import store from 'src/store'
 		},
 
 
+		fillFormObjectValue({frmID, frmObj, data}) {
+			store.dispatch('App/doAppFillObjectValue', { 
+							  frmID: frmID, 
+							  frmObj: frmObj, 
+							  hasil: data
+							});
+
+		},
+
 		validationFormObject({form, frmID, frmObj}) {
 			/* f = Form, k = Key, o = Object */	
 			var f = store.state.App.AppForms[frmID].Forms[frmObj];
@@ -462,6 +504,40 @@ import store from 'src/store'
 				}
 			} // End Looping Object
 			return gagal;
+		},
+
+
+		getValueFormObject({o}) {
+			var Data = new Object;
+			/* f = Form, k = Key, o = Object */	
+			for (var k in o) { // Begin Looping Object Forms
+				var f = o[k];
+				Data[k] = {}
+				for (var fk in f) {  // Begin Looping Object
+					var fo = f[fk];  // console.log(fo);
+					switch (fo.Tipe) {
+						case "dtp":
+							var a = fo.Value;
+							if (fo.FormatDisplay == 'D-MMMM-YYYY') {
+							    a = a.slice(0, 10).split('-');
+								Data[k][fo.Code] = a.join('');
+							} else {
+								Data[k][fo.Code] = fo.Value;								
+							}
+							// console.log('Auth - getValueFormObject - Data[k][fo.Code]',Data[k][fo.Code]);
+							break;
+						case "pop":
+							Data[k][fo.Code] = fo.Value;
+							Data[k][fo.PopCode] = fo.Pops[fo.PopCode].Value;
+							Data[k][fo.PopDesc] = fo.Pops[fo.PopDesc].Value;
+							break;
+						default:
+							Data[k][fo.Code] = fo.Value;
+							break;
+					}
+				} // End Looping Object
+			} // End Looping Object Forms
+			return Data;
 		},
 
 		async saveData({form, frmID, frmObj, method}) {
@@ -493,14 +569,7 @@ import store from 'src/store'
 
 				var o = store.state.App.AppForms[frmID].Forms;
 				// console.log('Auth - actionForm , Object :', o)
-				for (var k in o) { // Begin Looping Object Forms
-					var f = o[k];
-					Data[k] = {}
-					for (var fk in f) {  // Begin Looping Object
-						var fo = f[fk];
-						Data[k][fo.Code] = fo.Value;
-					} // End Looping Object
-				} // End Looping Object Forms
+				    Data = this.getValueFormObject({o:o});
 				// console.log(Data);				
 			} else {
 				Data['frm'+frmID] = store.state.App.AppForms[frmID].Grid.RowData;

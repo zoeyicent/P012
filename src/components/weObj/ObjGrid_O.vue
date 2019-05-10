@@ -125,7 +125,7 @@
             myGrid: { type : Object },
         },
         created () { 	    			
-			console.log('masuk Object Grid OTHER ', this.frmID+' ('+this.subFrmID+')');
+			// console.log('masuk Object Grid OTHER ', this.frmID+' ('+this.subFrmID+')');
 			this.setAppForms_Data({
 				id: this.frmID,
 				path: this.subFrmID+'Grid.showPopUpFilterForm',
