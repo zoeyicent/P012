@@ -516,6 +516,20 @@ import { date } from 'quasar'
 				for (var fk in f) {  // Begin Looping Object
 					var fo = f[fk];  // console.log(fo);
 					switch (fo.Tipe) {
+						case "cmb":
+						case "rad":
+							var Nilai = fo.Value;
+							if (fo.Jenis === 'toggle' || fo.Jenis === 'MULTIPLE') {
+								if (Array.isArray(Nilai)) {
+									Data[k][fo.Code] = Nilai.join(fo.SplitParam);
+								} else {
+									Data[k][fo.Code] = Nilai.trim();
+								}
+							} else {
+								Data[k][fo.Code] = Nilai.trim();
+							}
+							// console.log('Auth - getValueFormObject - Data[k][fo.Code]',Data[k][fo.Code]);
+							break;
 						case "dtp":
 							var a = fo.Value;
 							if (fo.FormatDisplay == 'D-MMMM-YYYY') {

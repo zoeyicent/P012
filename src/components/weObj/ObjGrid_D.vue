@@ -104,22 +104,38 @@
 			</div>
 
 			<div v-else-if="(col.tipeGrid == 'act001' ?  true : false)">
-				<q-btn icon="print" color="primary" round dense outline 
-					v-if="getAppForms[frmID].Properties.tombol.P.show"
-					@click="CommandClick ('9', '', dataDetail.row)"
-					:disabled="getAppForms[frmID].Properties.tombol.P.disabled" />
-				<q-btn icon="assignment" color="primary" round dense outline 
-					v-if="getAppForms[frmID].Properties.tombol.V.show"
-					@click="CommandClick ('6', '', dataDetail.row)"
-					:disabled="getAppForms[frmID].Properties.tombol.V.disabled" />
-				<q-btn icon="edit" color="primary" round dense outline 
-					v-if="getAppForms[frmID].Properties.tombol.E.show"
-					@click="CommandClick ('2', '', dataDetail.row)"
-					:disabled="getAppForms[frmID].Properties.tombol.E.disabled" />
-				<q-btn icon="delete" color="primary" round dense outline 
-					v-if="getAppForms[frmID].Properties.tombol.D.show"
-					@click="CommandClick ('3', '', dataDetail.row)"
-					:disabled="getAppForms[frmID].Properties.tombol.D.disabled" />
+				<div v-if=" (frmType === 'grd' ?  true : false) " >
+					<q-btn icon="assignment" color="primary" round dense outline 
+						v-show="myGrid.Action.toUpperCase().indexOf('L') == -1 ? false : true" 
+						@click="myGrid.grdAction({mode:'6', data:dataDetail.row})"
+						:disabled="getAppForms[frmID].Properties.tombol.V.disabled" />
+					<q-btn icon="edit" color="primary" round dense outline 
+						v-show="myGrid.Action.toUpperCase().indexOf('E') == -1 ? false : true" 
+						@click="myGrid.grdAction({mode:'2', data:dataDetail.row})"
+						:disabled="getAppForms[frmID].Properties.tombol.E.disabled" />
+					<q-btn icon="delete" color="primary" round dense outline 
+						v-show="myGrid.Action.toUpperCase().indexOf('D') == -1 ? false : true" 
+						@click="myGrid.grdAction({mode:'3', data:dataDetail.row})"
+						:disabled="getAppForms[frmID].Properties.tombol.D.disabled" />
+				</div>
+				<div v-else>
+					<q-btn icon="print" color="primary" round dense outline 
+						v-if="getAppForms[frmID].Properties.tombol.P.show"
+						@click="CommandClick ('9', '', dataDetail.row)"
+						:disabled="getAppForms[frmID].Properties.tombol.P.disabled" />
+					<q-btn icon="assignment" color="primary" round dense outline 
+						v-if="getAppForms[frmID].Properties.tombol.V.show"
+						@click="CommandClick ('6', '', dataDetail.row)"
+						:disabled="getAppForms[frmID].Properties.tombol.V.disabled" />
+					<q-btn icon="edit" color="primary" round dense outline 
+						v-if="getAppForms[frmID].Properties.tombol.E.show"
+						@click="CommandClick ('2', '', dataDetail.row)"
+						:disabled="getAppForms[frmID].Properties.tombol.E.disabled" />
+					<q-btn icon="delete" color="primary" round dense outline 
+						v-if="getAppForms[frmID].Properties.tombol.D.show"
+						@click="CommandClick ('3', '', dataDetail.row)"
+						:disabled="getAppForms[frmID].Properties.tombol.D.disabled" />
+				</div>				
 			</div>	
 
 			<div v-else-if="(col.tipeGrid == 'act002' ?  true : false)">
