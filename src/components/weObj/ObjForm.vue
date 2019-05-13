@@ -442,7 +442,7 @@
 						</q-tooltip>
 					</q-btn>
 				</q-toolbar>
-				<div class="q-pa-lg">
+				<div class="q-pa-md">
 					<slot name="GridForm"></slot>
 				</div>
 			</q-modal-layout>
