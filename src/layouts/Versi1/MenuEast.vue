@@ -166,7 +166,7 @@
 		},
 		// beforeMount () { console.log('MainMenu beforeMount', 'Deskripsikan disini') },	
 		computed: {	
-			...mapGetters('App',['getAppForms','getAppIdFormActive']),
+			...mapGetters('App',['getAppForms']),
 			searchAllColumns() {
 				if (this.getAppForms[this.frmID].Grid.SearchAllColumns === '' ) {
 					return "Search All columns " 	

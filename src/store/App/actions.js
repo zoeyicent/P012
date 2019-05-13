@@ -2,7 +2,7 @@
 export function someAction (context) {
 }
 
-export async function doAppLogin ({commit, rootState, state }, {user, pass, keep}) {
+export async function doAppLogin ({commit, rootState, state, dispatch }, {user, pass, keep}) {
 }
 */
 
@@ -359,21 +359,10 @@ export async function doAppLoadObject ({commit, state}, {frmID, frmObj, method})
 }  
 
 
-export async function doAppFillObject ({commit, state}, {frmID, frmObj, method, mode, dataParams}) {
-    var params = new Object;
-        params = dataParams;
-        params['Controller'] = 'c' + frmID;
-        params['Method'] = method === '' ? 'FillForm' : method;
-    const Hasil = await weApi.fnRequestData (params, '');
-    
-    if (!Hasil.success) {
-        /*
-            ini untuk menghandle TOKEN EXPIRED
-        */
-        return Hasil;
-    }
+export function doAppFillObjectValue ({commit, state}, {frmID, frmObj, hasil}) {
 
-    var Data = Hasil.data;
+    // console.log('Action - : doAppFillObjectValue (frmID:' + frmID + ' frmObj:' + frmObj + ') hasil : ', hasil);
+    var Data = hasil;
     var f = state.AppForms[frmID].Forms[frmObj];
     for (var k in f) {
         var o = f[k];
@@ -400,6 +389,7 @@ export async function doAppFillObject ({commit, state}, {frmID, frmObj, method, 
                 }
                 break;  
             case "dtp":
+                // console.log('Action - doAppFillObjectValue - dtp', Nilai);
                 var Nilai = Nilai;
                 if (Nilai=="") {
                     o.Value = "";
@@ -423,6 +413,10 @@ export async function doAppFillObject ({commit, state}, {frmID, frmObj, method, 
                 o.Value = 'tempVal';
                 o.FileValue = Nilai.length == 0 ? 'tempVal' : Nilai;
                 break;
+            case "grd":
+                // console.log(' action.js - doAppFillObject - grd ', Nilai);
+                o.Value = Nilai.Data.data;
+                break;
             default:
                 o.Value = Nilai; 
                 break;
@@ -436,6 +430,25 @@ export async function doAppFillObject ({commit, state}, {frmID, frmObj, method, 
 
     } // End Looping Object
 
+}
+
+export async function doAppFillObject ({commit, state, dispatch}, {frmID, frmObj, method, mode, dataParams}) {
+    var params = new Object;
+        params = dataParams;
+        params['Controller'] = 'c' + frmID;
+        params['Method'] = method === '' ? 'FillForm' : method;
+    const Hasil = await weApi.fnRequestData (params, '');
+    
+    if (!Hasil.success) {
+        /*
+            ini untuk menghandle TOKEN EXPIRED
+        */
+        return Hasil;
+    }
+
+    dispatch('doAppFillObjectValue', { frmID:frmID, 
+                                       frmObj:frmObj, 
+                                       hasil:Hasil.data} );
 
     /*
         return Hasil; 

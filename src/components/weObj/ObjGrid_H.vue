@@ -51,7 +51,7 @@
 	      	...mapGetters('App',['getAppForms']),
 		},
 		created () {			
-			console.log('masuk Object Grid HEADER ', this.frmID+' ('+this.subFrmID+')');
+			// console.log('masuk Object Grid HEADER ', this.frmID+' ('+this.subFrmID+')');
 		}
 	    
 	}

@@ -18,6 +18,7 @@
 	      :visible-columns="getAppForms[frmID].Grid.VisibleColumns === undefined ? [] : getAppForms[frmID].Grid.VisibleColumns"
 -->
 	    <q-table class="sticky-table"
+	      :title="formType==='grd' ? myGrid.Description === undefined ? '' : myGrid.Description : ''"
       	  :table-style="tblheight"
 	      :data="myGrid.Grid.Rows === undefined ? [] : myGrid.Grid.Rows.data"
 	      :columns="myGrid.Grid.Columns === undefined ? [] : myGrid.Grid.Columns"
@@ -30,6 +31,19 @@
 	      dense
 	      color="secondary"
 	    > 
+
+
+
+			<template 
+				:slot="formType==='grd' ? 'top-right' : ''" 
+				slot-scope="props" >
+				<q-btn
+				  v-if="myGrid.Action.toUpperCase().indexOf('A') == -1 ? false : true" 
+				  flat round dense
+				  icon="add"
+				  @click="myGrid.grdAction({mode:'1', data:''})"
+				/>
+			</template>
 
 	    	<GridHeader slot="header" slot-scope="props"
 	    		:frmID="frmID" 
@@ -72,9 +86,9 @@
 	      	
 	      	var sF = this.subForm === undefined ? "" : this.subForm;
 	      		sF = sF.trim();
-	      	if (this.subForm != "" ) {
-	      		console.log('created - ObjGrid ', sF);
-	      	}
+	      	// if (this.subForm != "" ) {
+	      	// 	console.log('created - ObjGrid ', sF);
+	      	// }
 			this.setAppForms_Data({ id: this.frmID, path:sF+'Grid', data: {} });
 
 			this.setAppForms_Data({ 
@@ -129,9 +143,9 @@
 
 			this.LoadDataGrid();
 
-	      	if (this.subForm != "" ) {
-	      		console.log('created - ObjGrid xxxxxxxxxxxxxxx');
-	      	}
+	      	// if (this.subForm != "" ) {
+	      	// 	console.log('created - ObjGrid xxxxxxxxxxxxxxx');
+	      	// }
 	    },
 		// mounted() { console.log('ObjGrid mounted', 'Test 1222222') },	
 		// beforeMount () { console.log('ObjGrid beforeMount', 'Test 22222') },		
@@ -154,7 +168,7 @@
 	      	},
 	      	myGrid() {
 
-				console.log('Masuk myGrid', this.frmID + ' (' + this.subForm + ') ');
+				// console.log('Masuk myGrid', this.frmID + ' (' + this.subForm + ') ');
 
 	      		if (this.subForm==="") {
 		      		return this.getAppForms[this.frmID];
@@ -168,6 +182,7 @@
 					for (i = 0; i < vPath.length - 1; i++) {
 						f = f[vPath[i]];
 				    }
+
 		      		return f;
 		      		// return this.getAppForms[this.frmID][vPath];
 	      		}
@@ -193,6 +208,8 @@
 			    // this.tblheight = "height: "+(size.height - 145).toString()+"px"
 				if (this.frmType === "popup") {
 				    this.tblheight = "height: "+(size.height - 300).toString()+"px"
+				} else if (this.frmType === "grd") {
+					this.tblheight = "";
 				} else {
 				    this.tblheight = "height: "+(size.height - 145).toString()+"px"
 				}
@@ -211,6 +228,7 @@
 								params['Controller'] = 'c' + this.myGrid.Controller;
 								params['Method'] = this.myGrid.Method;
 							}
+							// console.log('ObjGrid - LoadDataGrid ', this.myGrid)
 							// if (event) {
 							// 	params['page'] = event.pagination.page;
 							// 	params['perPage'] = event.pagination.rowsPerPage;
@@ -219,14 +237,18 @@
 							// 	params['perPage'] = this.getAppForms[this.frmID].Grid.Pagination.rowsPerPage;
 							// }
 
-							params['page'] = event ? event.pagination.page : 
-												Saya.myGrid.Grid.Pagination.page;
-							params['perPage'] = event ? event.pagination.rowsPerPage : 
-												this.myGrid.Grid.Pagination.rowsPerPage;
-							params['cari'] = this.myGrid.Grid.Filter === undefined ? [] : 
-											 this.myGrid.Grid.Filter.filter(r => r.filterValue != '');
-							params['urut'] = this.myGrid.Grid.Sort;
-							params['AllColumns'] = this.myGrid.Grid.SearchAllColumns;
+							if (this.frmType === "grd") {
+								// console.log('abcde', this.myGrid)									
+							} else {
+								params['page'] = event ? event.pagination.page : 
+													Saya.myGrid.Grid.Pagination.page;
+								params['perPage'] = event ? event.pagination.rowsPerPage : 
+													this.myGrid.Grid.Pagination.rowsPerPage;
+								params['cari'] = this.myGrid.Grid.Filter === undefined ? [] : 
+												 this.myGrid.Grid.Filter.filter(r => r.filterValue != '');
+								params['urut'] = this.myGrid.Grid.Sort;
+								params['AllColumns'] = this.myGrid.Grid.SearchAllColumns;
+							}
 
 						this.loading = true;
 						await this.doAppLoadGrid({ 

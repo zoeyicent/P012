@@ -16,50 +16,26 @@
 				:key="index"
 				v-if="Obj.Panel === 'Panel1' ? true : false"
 			/>  	
-			<div class="row">
-				<ObjForm class="col-xs-12 col-md-6 q-ma-xs"
-					v-for="(Obj, index) in myForm.Forms['frm'+frmID]" 
-					:pObj="Obj" :pFrmObj="'frm'+frmID"
-					:key="index"
-					v-if="Obj.Panel === 'Panel1A' ? true : false"
-				/>  	
-				<ObjForm class="col-xs-12 col-md-4 q-ma-xs"
-					v-for="(Obj, index) in myForm.Forms['frm'+frmID]" 
-					:pObj="Obj" :pFrmObj="'frm'+frmID"
-					:key="index"
-					v-if="Obj.Panel === 'Panel1B' ? true : false"
-				/>  	
-			</div>
-  		</div>
-  		<div class="col-xs-12 col-md-5 q-ma-xs">
-			<ObjForm 
-				v-for="(Obj, index) in myForm.Forms['frm'+frmID]" 
-				:pObj="Obj" :pFrmObj="'frm'+frmID"
-				:key="index"
-				v-if="Obj.Panel === 'Panel2' ? true : false"
-			/>  	
   		</div>
   		<div class="col-xs-12 col-md-11 q-ma-xs">
 			<ObjForm 
 				v-for="(Obj, index) in myForm.Forms['frm'+frmID]" 
 				:pObj="Obj" :pFrmObj="'frm'+frmID"
 				:key="index"
+				@eCallDetailForm="SHLINEshow"
+				@eSaveDetailForm="SHLINEsave"
 				v-if="Obj.Panel === 'Panel5' ? true : false"
 			>
-				<template slot="GridForm">
-					<div class="column">
-						<q-btn icon="add"  />
-						<q-btn icon="add"  />
-						<q-btn icon="add"  />
-
+					<div 
+						slot="GridForm"
+						:style="$q.platform.is.mobile ? 'width: 280px' : 'width: 500px'">
 						<ObjForm 
-							:pObj="myForm.Forms['frm'+frmID].TUUSER" :pFrmObj="'frm'+frmID"
+							v-for="(Obj, index) in myForm.Forms['frmSHLINE']" 
+							:pObj="Obj" :pFrmObj="'frmSHLINE'"
+							:key="index"
+							v-if="Obj.Panel === 'Panel11' ? true : false"
 						/>  
-
-	 				</div>
-				</template>	
-
- 		
+	 				</div>	 				 	
 			</ObjForm>  	
   		</div>
   		<!-- <div class="col-xs-12 col-md-5 q-ma-xs">
@@ -87,6 +63,15 @@
 	    		form: this,						// --> local this
 	    		formId: 'frmID',  				// --> local variabel name 
 	    		CommandClick: this.CommandClick
+	    	}).then(()=>{
+
+				weAuth.loadFormObject({
+					form: this,
+					frmID: this.frmID,			
+					frmObj: 'frmSHLINE',	
+					method: 'FormObjectDetail' 	
+				});
+
 	    	});
 	    },
 		// mounted() { console.log('TBLDSC mounted', 'Test 1222222') },	
@@ -98,11 +83,27 @@
 		computed: {
 	      	...mapGetters('App',['getAppForms']),
 			myForm() {
-				console.log('Masuk myForm TBLDSC');
 				return this.getAppForms[this.frmID];
 				// return [];
 			},			
 		},	
+		watch: {
+			'myForm.Forms.frmSHLINE.SLQTYS.Value': function (data) {
+				this.TotalLineAmount();
+			},
+			'myForm.Forms.frmSHLINE.SLHARG.Value': function (data) {
+				this.TotalLineAmount();
+			},
+			'myForm.Forms.frmSHHEAD.SHLINE.Value': function (data) {
+				let total = 0;
+				let g = data;
+				for (let index in g) {
+					// console.log('index', index);
+					total += Number(g[index].SLTOTL)
+				}
+				this.myForm.Forms.frmSHHEAD.SHTOTL.Value = total;
+			},
+		},
 		methods: {
 			// ...mapMutations('App',['setAppForms_Data']),
 			// ...mapActions('App',['doAppLoadObject']),
@@ -161,7 +162,44 @@
 					}					
 				}
 
-			}
+			},
+			TotalLineAmount () {
+				var f = this.myForm.Forms['frmSHLINE']
+				f.SLTOTL.Value = f.SLQTYS.Value * f.SLHARG.Value;
+
+			},
+			SHLINEshow (mode) {
+				var f = this.myForm.Forms['frm'+this.frmID]
+				// console.log('f.SHBPNOIY',f.SHBPNOIY);
+				if(mode === '1') {
+					if (f.SHBPNOIY.Value == '') {
+						this.$q.notify('Customer harus diisi dulu!!!');
+						f.SHLINE.OpenForm = false;
+					}
+				} else if (mode === '2') {
+					// this.frmSHLINE.BBDESC.ReadOnly = true
+				}
+			},
+			SHLINEsave (mode) {
+				var f = this.myForm.Forms['frm'+this.frmID]
+				if(mode === '1') {
+					// var g = this.myForm.Forms['frm'+this.frmID].SHLINE.Grid.Rows.data;
+
+					// let total = 0;
+					// for (let index in g) {
+					// 	console.log('index', index);
+					// 	total += Number(g[index].SLTOTL)
+					// }
+					// console.log('total', total);
+
+					if (f.SHBPNOIY.Value == '') {
+						this.$q.notify('Customer harus diisi dulu!!!');
+						f.SHLINE.SaveForm = false;
+					}
+				} else if (mode === '2') {
+					// this.frmSHLINE.BBDESC.ReadOnly = true
+				}
+			},
 		},			
 		data () {
 			return {

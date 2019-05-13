@@ -130,7 +130,7 @@
 			...mapGetters('App',['getAppName','getAppDescription','getAppCopyright','getAppVersion',
 								 'getAppForms','getAppIdFormActive','getAppModules']),	
 			FormChildActive() {
-				console.log('MainMenu.vue ','MdiForm - FormChildActive ZZZZZZZZZZz');
+				// console.log('MainMenu.vue ','MdiForm - FormChildActive ZZZZZZZZZZz');
 				return this.getAppForms[this.getAppIdFormActive(this.frmID)];
 			},			
 		},	

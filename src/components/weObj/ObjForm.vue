@@ -34,7 +34,7 @@
   :orientation="pObj.Orientation === '' ? 'horizontal' : pObj.Orientation"
   class="myobj"
 >
-	<slot></slot>
+	<slot name="ObjH"></slot> <!-- Slot for Object Header -->
 <!--
 ***************************************************  
 ************BEGIN OBJECT TEXT
@@ -389,7 +389,72 @@
 ************END OBJECT POPUP
 ***************************************************  
   												--> 
+<!--
+***************************************************  
+************BEGIN OBJECT GRID
+***************************************************  
+  												--> 
+	<div v-else-if="pObj.Tipe=='grd'">  	
+		<!--  
+:helper="popDescription"
+		-->
+		<ObjGrid 
+            :frmID="frmID"
+            :subFrmID="'Forms.'+pFrmObj+'.'+pObj.Code+'.'"
+            frmType="grd"
+    	/>
 
+		<q-input
+			v-show="false" 
+			v-model="ObjForm" 
+			stack-label="Grid Detail Data" 
+			:ref="'ref'+pObj.Code"
+			readonly
+			inverted-light
+			color="grey-6"
+			@input="$v.ObjForm.$touch"
+		/>
+
+		<q-modal 
+			:ref="'ref'+pObj.Code+'Modal'"
+			v-model="grdDetailModal"
+			minimized
+			no-backdrop-dismiss
+			no-esc-dismiss
+		>
+			<q-modal-layout>
+				<q-toolbar slot="header">
+					<q-btn
+						flat round dense
+						@click="grdModalBack"
+						icon="reply"
+						wait-for-ripple
+					/>
+					<q-toolbar-title>
+						{{pObj.Description}}
+					</q-toolbar-title>
+					<q-btn flat round dense icon="save" 
+						v-show="grdMode==='6' ? false : true"
+						@click="grdSave" >						 
+						<q-tooltip anchor="top right" self="bottom left">
+							<div v-show="grdMode==='1' ? true : false"><strong>Insert</strong></div>
+							<div v-show="grdMode==='2' ? true : false"><strong>Update</strong></div>
+						</q-tooltip>
+					</q-btn>
+				</q-toolbar>
+				<div class="q-pa-lg">
+					<slot name="GridForm"></slot>
+				</div>
+			</q-modal-layout>
+		</q-modal>
+		
+	</div>
+<!--
+***************************************************  
+************END OBJECT GRID
+***************************************************  
+  												--> 
+	<slot name="ObjF"></slot> <!-- Slot for Object Footer -->
 </q-field>			
 </template>
 
@@ -403,6 +468,7 @@
 	}
 
 	import weApi from 'src/api'
+	import weAuth from 'src/auth';
 	import { filter } from 'quasar'
 	import { required, minLength, maxLength, alpha, minValue, maxValue } from 'vuelidate/lib/validators'
 	import store from 'src/store'
@@ -417,14 +483,27 @@
         },
   		components : {ObjGrid},	
 		created () { 
-			this.frmID = this.$parent.frmID;
+			// BEGIN By Wilinato 2019 05 09
+			// this.frmID = this.$parent.frmID;
+			this.frmID = this.getAppIdFormActive('MainMenu');				
+			// Tidak bisa pakai this.$parent.frmID
+			// Karena untuk Form ke 2 tidak bisa dapat (Form HEADER dan DETAIL)
+			// END By Wilinato 2019 05 09
+
 			if (this.pObj.Tipe==="pop") {
-				console.log(this.pObj.Code , 'Forms.'+this.pFrmObj+'.'+this.pObj.Code+'.'+'Grid.PopSetValue');
+				// console.log(this.pObj.Code , 'Forms.'+this.pFrmObj+'.'+this.pObj.Code+'.'+'Grid.PopSetValue');
 
 				this.setAppForms_Data({
 					id: this.frmID,
 					path:'Forms.'+this.pFrmObj+'.'+this.pObj.Code+'.'+'PopSetValue',
 					data: this.popSetValue});
+
+			} else if(this.pObj.Tipe==="grd") {
+				
+				this.setAppForms_Data({
+					id: this.frmID,
+					path:'Forms.'+this.pFrmObj+'.'+this.pObj.Code+'.'+'grdAction',
+					data: this.grdAction});			
 
 			}
 			// console.log('ObjForm created', this.pObj);
@@ -438,12 +517,29 @@
 		// deactivated () { console.log('ObjForm deactivated', 'Test 456')  },		
 		// watch: { },
 		computed: { 
-			...mapGetters('App',['getAppForms']),
+			...mapGetters('App',['getAppForms','getAppIdFormActive']),
 			ObjForm: {
 				get: function() {
 
+
 					// Begin Clear
 					switch(this.pObj.Tipe) {
+						case 'grd':
+							// console.log('masuk sini Forms.'+this.pFrmObj+'.'+this.pObj.Code+'.'+'Grid.Rows.data', this.pObj);
+
+							// console.log('this.pObj', this.pObj);
+							// console.log('this.pObj.Code', this.pObj.Code);
+							// console.log('this.pObj.Tipe', this.pObj.Tipe);
+							// console.log('this.pObj.Grid', typeof this.pObj.Value);
+
+							if (typeof(this.pObj.Value) == 'object') {
+								this.setAppForms_Data({
+									id: this.frmID,
+									path:'Forms.'+this.pFrmObj+'.'+this.pObj.Code+'.'+'Grid.Rows.data',
+									data: this.pObj.Value});
+							}
+
+							break;
 						case 'fle':
 							if(this.pObj.Value.length === 0){
 								if(typeof(this.$refs['ref'+this.pObj.Code]) != 'undefined') {
@@ -642,7 +738,6 @@
 																						*/
 
 			popBlur() {
-				
 				if ( this.pObj.Pops[this.pObj.PopCode+this.pObj.PopDesc].Disabled === true) {
 					return;
 				}
@@ -728,6 +823,7 @@
 			},
 
 			popSelected(item){		
+				console.log('ObjForm - popSelected','masuk sini')
 				this.popSetValue({
 					flag: true, 
 					iy: typeof(item.value) === 'number' ? item.value : item.value.trim(), 
@@ -738,7 +834,6 @@
 			},			
 			popAutoComplete(terms, done) {
 				
-
 				var cari = [{ field: this.pObj.PopCode, 
 							  label: "", 
 							  filterOperator: 'likeRight', 
@@ -788,6 +883,115 @@
 ------------------------------------------------------------------------------------------
 																						*/
 
+
+/*
+------------------------------------------------------------------------------------------
+------------------Begin object GRID-------------------------------------------------------
+------------------------------------------------------------------------------------------
+																						*/
+
+
+			grdClearForm () {
+				// console.log('this.$parent',this.$parent);
+				// console.log('this.frmID',this.frmID);
+				// console.log('this.pObj.Code',this.pObj.Code);
+				weAuth.clearFormObject({
+					form: this,
+					frmID: this.frmID, 
+					frmObj: 'frm'+this.pObj.Code, 
+					mode: this.grdMode					
+				});
+			},
+			grdAction({mode, data}) {
+				this.pObj.OpenForm = true
+				this.grdMode = mode
+				this.grdClearForm();
+				this.$emit('eCallDetailForm', this.grdMode);	
+				switch (mode) {
+					case "1":
+						if(!this.pObj.OpenForm) { return }				
+						this.grdDetailModal = true
+						break;
+					case "2":
+						this.grdSelectionRow = data;
+						weAuth.fillFormObjectValue({frmID: this.frmID, frmObj: 'frm'+this.pObj.Code, data:data});
+						if(!this.pObj.OpenForm) { return }
+						this.grdDetailModal = true
+						break;
+					case "3":
+						this.grdSelectionRow = data;
+						if(!this.pObj.OpenForm) { return }
+						this.grdSave();
+						break;
+					case "6":
+						weAuth.fillFormObjectValue({frmID: this.frmID, frmObj: 'frm'+this.pObj.Code, data:data});
+						this.grdDetailModal = true
+						break;
+				}				
+			},
+			grdModalBack () {
+				this.grdDetailModal = false
+				this.grdMode = '5'		
+				this.grdClearForm();
+				this.grdMode = ''				
+			},
+			grdSave () {
+
+				this.pObj.SaveForm = true
+				this.$emit('eSaveDetailForm', this.grdMode);	
+				if(!this.pObj.SaveForm) { return }
+
+				if(this.grdMode === '1' || this.grdMode === '2') {
+					//Begin Validation Form
+					if (weAuth.validationFormObject({
+							form: this, 
+							frmID: this.frmID, 
+							frmObj: 'frm'+this.pObj.Code
+						})) {
+
+						this.$q.notify('Please review fields again!'); 
+						return;
+					}
+					//End Validation Form
+				}
+
+				var o = this.getAppForms[this.frmID].Forms;
+				// console.log('ObjForm - grdSave - o ', o);
+				var f = weAuth.getValueFormObject({o: o})['frm'+this.pObj.Code];
+				var j = JSON.stringify(f);
+				var Data = JSON.parse(j);
+				// console.log('ObjForm - grdSave - f ', f);
+				// console.log('ObjForm - grdSave - this.pObj.Value ', this.pObj.Value);
+				// console.log('ObjForm - Data', Data)
+				// console.log('ObjForm - Grid', Grid)
+				// console.log('ObjForm - this.grdSelectionRow', this.grdSelectionRow)
+				var j = JSON.stringify(this.pObj.Value);
+				var Grid = JSON.parse(j);					
+
+				if(this.grdMode === '1') { // Add
+					Grid.push(Data); 		
+					this.grdClearForm();
+				} else if (this.grdMode === '2') { // Edit
+					Grid[this.grdSelectionRow.__index] = Data;
+				} else if (this.grdMode === '3') { // Delete
+					Grid.splice(this.grdSelectionRow.__index,1);
+				} else {
+					this.$q.notify('error Save Into Grid2 ');
+				}
+				this.pObj.Value = Grid;
+
+				if (this.grdMode === '2') { // Begin Untuk Update Langsung Keluar
+					this.grdModalBack();
+				} // End Untuk Update Langsung Keluar
+
+			}
+/*
+------------------------------------------------------------------------------------------
+------------------End object GRID---------------------------------------------------------
+------------------------------------------------------------------------------------------
+																						*/
+
+
 		},			
 		data () {
 			return {
@@ -799,6 +1003,9 @@
 				showModal: false,
 				listData : [],
 				frmID: '',
+				grdDetailModal: false,
+				grdMode: '',
+				grdSelectionRow: {},
 	      	}
 	    }
 	}
