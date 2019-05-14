@@ -104,6 +104,7 @@
 			@input="$v.ObjForm.$touch"
 			:type="pObj.DateType"
 			:format="pObj.FormatDisplay"
+			class="myfont"
 		/>
 	</div>
 <!--
@@ -441,7 +442,7 @@
 						</q-tooltip>
 					</q-btn>
 				</q-toolbar>
-				<div class="q-pa-lg">
+				<div class="q-pa-md">
 					<slot name="GridForm"></slot>
 				</div>
 			</q-modal-layout>
@@ -589,41 +590,46 @@
 				// console.log(this.ObjForm);
 				// console.log(this.pObj);
 				// console.log(this.$v.ObjForm.minLength);
-				if (this.pObj.Required) {
-					if (!this.$v.ObjForm.required) {
-						return 'This field is required.';
-					}
-				} 
 
-				switch (this.pObj.Tipe) {
-					case "txt":
-					case "pwd":
-						if (this.pObj.Min != 0) {
-							if (!this.$v.ObjForm.minLength) {
-								// return 'This field must have at least ' + this.pObj.Min + ' characters.';
-								return 'Minimum ' + this.pObj.Min + ' characters.';
-							} 
-						} 
-						if (this.pObj.Max != 0 ) {
-							if (!this.$v.ObjForm.maxLength) {
-								// return 'This field must have at most ' + this.pObj.Max + ' characters.';
-								return 'Maximum ' + this.pObj.Max + ' characters.';
-							}
-						} 
-						break;
-					
-					case "num":
-						if (this.pObj.MinValue != 0) {
-							if (!this.$v.ObjForm.minValue) {
-								return 'Minimum value is ' + this.pObj.MinValue + '';
-							}
+				if(this.$v.$error) {
+
+					if (this.pObj.Required) {
+						if (!this.$v.ObjForm.required) {
+							return 'This field is required.';
 						}
-						if (this.pObj.MaxValue != 0)  {
-							if (!this.$v.ObjForm.maxValue) {
-								return 'Maximum value is ' +  this.pObj.MaxValue + '';
+					} 
+
+					switch (this.pObj.Tipe) {
+						case "txt":
+						case "pwd":
+							if (this.pObj.Min != 0) {
+								if (!this.$v.ObjForm.minLength) {
+									// return 'This field must have at least ' + this.pObj.Min + ' characters.';
+									return 'Minimum ' + this.pObj.Min + ' characters.';
+								} 
+							} 
+							if (this.pObj.Max != 0 ) {
+								if (!this.$v.ObjForm.maxLength) {
+									// return 'This field must have at most ' + this.pObj.Max + ' characters.';
+									return 'Maximum ' + this.pObj.Max + ' characters.';
+								}
+							} 
+							break;
+						
+						case "num":
+							if (this.pObj.MinValue != 0) {
+								if (!this.$v.ObjForm.minValue) {
+									return 'Minimum value is ' + this.pObj.MinValue + '';
+								}
 							}
-						}	
-						break;
+							if (this.pObj.MaxValue != 0)  {
+								if (!this.$v.ObjForm.maxValue) {
+									return 'Maximum value is ' +  this.pObj.MaxValue + '';
+								}
+							}	
+							break;
+					}
+
 				}
 
 				return;
