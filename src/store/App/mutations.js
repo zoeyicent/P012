@@ -14,6 +14,17 @@ export function setAppDefault (state, params) {
  	*/
 }
 
+export function setAppLoading (state, params) {
+	if (params=='+') {
+	 	state.AppLoading = state.AppLoading+1;   
+	} else {
+ 		state.AppLoading = state.AppLoading-1;   
+	}
+	/*
+		hanya pakai di file AUTH untuk startLoadingView dan endLoadingView
+	*/
+}
+
 export function setAppForms (state, params) {
 
  	if (params === '') {
@@ -57,7 +68,7 @@ export function setAppForms_Data (state, {id, path, data}) {
     // console.log('mutations-setAppForms_Data vObject', vObject);
     // console.log('mutations-setAppForms_Data vKey', vKey);
     // console.log('mutations-setAppForms_Data data', data);
-    
+
     Vue.set(vObject, vKey, data );
     // console.log('mutations-setAppForms_Data ', data);
 

@@ -17,6 +17,7 @@ import { date } from 'quasar'
 							 SpinnerType="audio", 
 							 loadingColor="white") {
 
+	    		store.commit('App/setAppLoading', '+');
 				form.$q.loading.show({
 					spinner: `q-spinner-${SpinnerType}`,
 					spinnerColor: loadingColor,
@@ -24,10 +25,16 @@ import { date } from 'quasar'
 					messageColor: loadingColor,
 					message: loadingMessage
 				});
+				// console.log('start : ', form.$q.loading.isActive);
 			},
 
 			endLoadingView(form) {			
-				form.$q.loading.hide();
+				// console.log('store', store.state.App);
+				if (store.state.App.AppLoading==1) {
+					form.$q.loading.hide();
+					// console.log('end', form.$q.loading.isActive);
+				}
+	    		store.commit('App/setAppLoading', '-');
 			},
 
 			async loadData(form, 
@@ -35,6 +42,7 @@ import { date } from 'quasar'
 						   spinnerType, 
 						   loadingColor, 
 						   callBack) {
+				// console.log('loadData Check Status Active : ', form.$q);
 				// console.log('loadData Check Status Active : ', form.$q.loading.isActive);
 				// if (form.$q.loading.isActive) {
 				// 	console.log('Begin looping');
@@ -293,32 +301,46 @@ import { date } from 'quasar'
 				method: 'FormObject' 	
 			});
 
+
 		},
 
 
 		async loadFormObject({form, frmID, frmObj, method}) {
 
-			await store.dispatch('App/doAppLoadObject', { 
-						frmID: frmID, 
-						frmObj: frmObj, 
-						method: method 
-				}).then( function() {
-					// console.log('auth.loadFormObject','masuk sini');	    	
-	    		}).catch( function (error) {
-						form.$q.notify('Error Loading Form Object ' + error );
-				});
+			// await store.dispatch('App/doAppLoadObject', { 
+			// 			frmID: frmID, 
+			// 			frmObj: frmObj, 
+			// 			method: method 
+			// 	}).then( function() {
+			// 		// console.log('auth.loadFormObject','masuk sini');	    
+			// 			form.$q.notify('Loading Form Object done' );	
+	  //   		}).catch( function (error) {
+			// 			form.$q.notify('Error Loading Form Object ' + error );
+			// 	});
 
 	    	
 	    	/*
 				Tidak pakai loading.loadData
 				Karene bentrok dengan LoadDataGrid
+				sudah solve dengan cara tambah parameter AppLoading
 	    	*/
 
-			// await this.loading.loadData( form , 'Loading Form Object... Please Wait...', 'Gears', '', 
-			// 	async () => {
+			await this.loading.loadData( form , 'Loading Form Object... Please Wait...', 'Gears', '', 
+				async () => {
 
-			// 	}
-			// );
+				await store.dispatch('App/doAppLoadObject', { 
+							frmID: frmID, 
+							frmObj: frmObj, 
+							method: method 
+					}).then( function() {
+						// console.log('auth.loadFormObject','masuk sini');	    
+						// form.$q.notify('Loading Form Object done' );	
+		    		}).catch( function (error) {
+							form.$q.notify('Error Loading Form Object ' + error );
+					});
+
+					}
+			);
 
 		},
 

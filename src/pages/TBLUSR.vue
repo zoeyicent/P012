@@ -103,7 +103,7 @@
 	    		formId: 'frmID',  				// --> local variabel name 
 	    		CommandClick: this.CommandClick
 	    	}).then(()=>{
-
+				
 				weAuth.loadFormObject({
 					form: this,
 					frmID: this.frmID,			
@@ -132,6 +132,7 @@
 			// ...mapActions('App',['doAppLoadObject']),
 			...mapActions('App',['doAppCall']),
 			CommandClick: function (mode) {
+
 				if (mode != "") {
 
 					weAuth.actionForm({
