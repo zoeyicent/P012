@@ -70,7 +70,7 @@
 										label="Login" 
 										@click="BtnLogin" />
 								<div class="q-mb-md">
-									<div style="font-size: 13px" class="text-center" v-html="version" />
+									<div class="text-center q-caption text-weight-medium" v-html="copyright" />
 								</div>								
 							</q-card-actions>
 
