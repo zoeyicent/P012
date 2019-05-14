@@ -283,12 +283,14 @@
 		<!--  
 :helper="popDescription"
 		-->
-		<q-field style="margin: 0" >
+		<!-- <q-field> -->
 			<div class="row">
 				<q-input 
 					clearable
 					:disable="pObj.Pops[pObj.PopCode+pObj.PopDesc].Disabled"
-					:before="[{icon: 'search', handler () { if(!pObj.ReadOnly) { pObj.ShowPopUpModal = !pObj.ShowPopUpModal } }}]"
+					:before="[{icon: 'search', handler () { 
+						if(!pObj.ReadOnly) { pObj.ShowPopUpModal = !pObj.ShowPopUpModal } 
+					}}]"
 					v-model="pObj.Pops[pObj.PopCode+pObj.PopDesc].Value" 
 					:ref="'ref'+pObj.Code+'search'"
 					:float-label="pObj.Name" 
@@ -302,9 +304,6 @@
 					@keyup.enter="$refs['ref'+pObj.Code+'search'].blur()"
 					class="col-12"
 				>
-
- 					<!--  
- 				-->
 					<q-autocomplete
 						@search="popAutoComplete"
 						@selected="popSelected"
@@ -343,7 +342,7 @@
 					color="grey-6"
 				/>
 			</div>
-		</q-field>
+		<!-- </q-field> -->
 
 
 
@@ -399,10 +398,10 @@
 :helper="popDescription"
 		-->
 		<ObjGrid 
-            :frmID="frmID"
-            :subFrmID="'Forms.'+pFrmObj+'.'+pObj.Code+'.'"
-            frmType="grd"
-    	/>
+			:frmID="frmID"
+			:subFrmID="'Forms.'+pFrmObj+'.'+pObj.Code+'.'"
+			frmType="grd"
+		/>
 
 		<q-input
 			v-show="false" 
@@ -442,7 +441,7 @@
 						</q-tooltip>
 					</q-btn>
 				</q-toolbar>
-				<div class="q-pa-md">
+				<div class="q-pl-sm q-pr-sm q-pb-md">
 					<slot name="GridForm"></slot>
 				</div>
 			</q-modal-layout>
