@@ -26,17 +26,18 @@
 				@eSaveDetailForm="SHLINEsave"
 				v-if="Obj.Panel === 'Panel5' ? true : false"
 			>
-					<div 
-						slot="GridForm"
-						:style="$q.platform.is.mobile ? 'width: 280px' : 'width: 500px'">
-						<ObjForm 
-							v-for="(Obj, index) in myForm.Forms['frmSHLINE']" 
-							:pObj="Obj" :pFrmObj="'frmSHLINE'"
-							:key="index"
-							v-if="Obj.Panel === 'Panel11' ? true : false"
-						/>  
-	 				</div>	 				 	
-			</ObjForm>  	
+				<div 
+					slot="GridForm"
+					:style="$q.platform.is.mobile ? 'width: 280px' : 'width: 500px'"
+				>
+					<ObjForm 
+						v-for="(Obj, index) in myForm.Forms['frmSHLINE']" 
+						:pObj="Obj" :pFrmObj="'frmSHLINE'"
+						:key="index"
+						v-if="Obj.Panel === 'Panel11' ? true : false"
+					/>
+				</div>				 	
+			</ObjForm>	
   		</div>
   		<!-- <div class="col-xs-12 col-md-5 q-ma-xs">
 			<ObjForm 
