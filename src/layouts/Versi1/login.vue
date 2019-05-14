@@ -105,7 +105,7 @@
 		data () {
 			return {
 				logos: Object.keys(logoData),
-				logo: 'Molectron', // Keytronic, Digitalizer, Molectron
+				logo: 'Molectron', // Keytronic, Digitalizer, Molectron, WilEdi
 				USER: '',
 				PASS: '',
 				KEEP: ''
