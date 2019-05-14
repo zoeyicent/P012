@@ -505,6 +505,11 @@
 					path:'Forms.'+this.pFrmObj+'.'+this.pObj.Code+'.'+'grdAction',
 					data: this.grdAction});			
 
+				this.setAppForms_Data({
+					id: this.frmID,
+					path:'Forms.'+this.pFrmObj+'.'+this.pObj.Code+'.'+'grdModalBack',
+					data: this.grdModalBack});			
+
 			}
 			// console.log('ObjForm created', this.pObj);
 			// console.log(this.pObj.Tipe + ' : ' + this.pObj.Name , this.ObjValidation);
@@ -533,6 +538,8 @@
 							// console.log('this.pObj.Grid', typeof this.pObj.Value);
 
 							if (typeof(this.pObj.Value) == 'object') {
+								// console.log('this.pObj.Value', this.pObj.Value);
+
 								this.setAppForms_Data({
 									id: this.frmID,
 									path:'Forms.'+this.pFrmObj+'.'+this.pObj.Code+'.'+'Grid.Rows.data',
@@ -906,7 +913,7 @@
 				this.pObj.OpenForm = true
 				this.grdMode = mode
 				this.grdClearForm();
-				this.$emit('eCallDetailForm', this.grdMode);	
+				this.$emit('eCallDetailForm', {mode:this.grdMode, data:data} );	
 				switch (mode) {
 					case "1":
 						if(!this.pObj.OpenForm) { return }				

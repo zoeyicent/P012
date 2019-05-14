@@ -250,6 +250,20 @@ export async function doAppMenuAction ({commit, state}, {frmID, mode}) {
 }   
 
 
+export async function doAppCall ({commit, state}, {params, frmID, id}) {
+/*
+    Hati-hati pakai v-if
+    karena bisa mentrigger ini berubah!!!
+*/
+    const Hasil = await weApi.fnRequestData (params, '');
+    return Hasil;
+
+    // if(typeof(Hasil.success) != 'undefined') {
+    //     return Hasil;
+    // }
+
+}
+
 
 export async function doAppLoadGrid ({commit, state}, {params, frmID, id}) {
 /*
@@ -261,6 +275,10 @@ export async function doAppLoadGrid ({commit, state}, {params, frmID, id}) {
     if(typeof(Hasil.success) != 'undefined') {
         return Hasil;
     }
+    // console.log('Action - params',params);
+    // console.log('Action - frmID',frmID);
+    // console.log('Action - id',id);
+    // console.log('Action - doAppLoadGrid',Hasil);
 
     if (state.AppForms[frmID].Grid.Columns === undefined) {
         /*

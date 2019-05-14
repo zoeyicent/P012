@@ -98,7 +98,7 @@ ada di masing masing module yang memanggil fnRequestData
 
 		try {
 			const response = await axios.get(Address, { params: params, withCredentials: true } )	
-        	// console.log('api.fnRequestData', response.data);		
+        	// console.log('api.fnRequestData', this.fnDecrypt(response.data));		
 			return this.fnDecrypt(response.data, '');
 		} catch (error) {
 			console.log('api.fnRequestData error', response.data);	

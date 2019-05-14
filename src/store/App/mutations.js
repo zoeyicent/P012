@@ -54,6 +54,10 @@ export function setAppForms_Data (state, {id, path, data}) {
         Vue.delete(vObject, vKey); // ini ada/tidak tetap bisa COMPUTED n VUE Store
     } 
  
+    // console.log('mutations-setAppForms_Data vObject', vObject);
+    // console.log('mutations-setAppForms_Data vKey', vKey);
+    // console.log('mutations-setAppForms_Data data', data);
+    
     Vue.set(vObject, vKey, data );
     // console.log('mutations-setAppForms_Data ', data);
 

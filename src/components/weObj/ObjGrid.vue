@@ -30,6 +30,7 @@
 	      @request="LoadDataGrid"
 	      dense
 	      color="secondary"
+	      :hide-bottom="formType==='grd' ? true : false"
 	    > 
 
 

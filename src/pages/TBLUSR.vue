@@ -44,20 +44,35 @@
 				v-for="(Obj, index) in myForm.Forms['frm'+frmID]" 
 				:pObj="Obj" :pFrmObj="'frm'+frmID"
 				:key="index"
+				@eCallDetailForm="TBLUAMshow"
+				@eSaveDetailForm="TBLUAMsave"
 				v-if="Obj.Panel === 'Panel5' ? true : false"
 			>
-				<template slot="GridForm">
-					<div class="column">
-						<q-btn icon="add"  />
-						<q-btn icon="add"  />
-						<q-btn icon="add"  />
 
+					<div 
+						slot="GridForm"
+						:style="$q.platform.is.mobile ? 'width: 280px' : 'width: 500px'">
 						<ObjForm 
-							:pObj="myForm.Forms['frm'+frmID].TUUSER" :pFrmObj="'frm'+frmID"
+							v-for="(Obj, index) in myForm.Forms['frmTBLUAM']" 
+							:pObj="Obj" :pFrmObj="'frmTBLUAM'"
+							:key="index"
+							v-if="Obj.Panel === 'Panel11' ? true : false"
 						/>  
-
-	 				</div>
-				</template>	
+						<ObjForm 
+							v-for="(Obj, index) in myForm.Forms['frmTBLUAM']" 
+							:pObj="Obj" :pFrmObj="'frmTBLUAM'"
+							:key="index"
+							v-show="detailFormAcess"
+							v-if="Obj.Panel === 'Panel12' ? true : false"
+						/>  
+						<ObjForm 
+							v-for="(Obj, index) in myForm.Forms['frmTBLUAM']" 
+							:pObj="Obj" :pFrmObj="'frmTBLUAM'"
+							:key="index"
+							v-show="!detailFormAcess"
+							v-if="Obj.Panel === 'Panel13' ? true : false"
+						/>  												
+	 				</div>	 
 
  		
 			</ObjForm>  	
@@ -79,7 +94,7 @@
 	import weAuth from 'src/auth';
 	import weObjs from '../components/weObj/main.js';
 	// import { mapGetters, mapMutations, mapActions } from 'vuex';
-	import { mapGetters } from 'vuex';
+	import { mapGetters, mapActions } from 'vuex';
 	export default { 
   		components : weObjs,	
 	    created () { 
@@ -87,6 +102,15 @@
 	    		form: this,						// --> local this
 	    		formId: 'frmID',  				// --> local variabel name 
 	    		CommandClick: this.CommandClick
+	    	}).then(()=>{
+
+				weAuth.loadFormObject({
+					form: this,
+					frmID: this.frmID,			
+					frmObj: 'frmTBLUAM',	
+					method: 'FormObjectDetail' 	
+				});
+
 	    	});
 	    },
 		// mounted() { console.log('TBLDSC mounted', 'Test 1222222') },	
@@ -98,7 +122,7 @@
 		computed: {
 	      	...mapGetters('App',['getAppForms']),
 			myForm() {
-				console.log('Masuk myForm TBLDSC');
+				// console.log('Masuk myForm TBLDSC');
 				return this.getAppForms[this.frmID];
 				// return [];
 			},			
@@ -106,6 +130,7 @@
 		methods: {
 			// ...mapMutations('App',['setAppForms_Data']),
 			// ...mapActions('App',['doAppLoadObject']),
+			...mapActions('App',['doAppCall']),
 			CommandClick: function (mode) {
 				if (mode != "") {
 
@@ -161,11 +186,95 @@
 					}					
 				}
 
-			}
+			},
+			TBLUAMshow ({mode, data}) {
+
+				var formDetail = this.myForm.Forms['frmTBLUSR'].TBLUAM;
+				var f = this.myForm.Forms['frmTBLUAM'];
+
+				if(mode === '1') {
+					this.detailFormAcess = true
+				} else if (mode === '2') {
+
+					if (this.MenuAccess.length === 0) {
+						this.MenuAccess = f.TAACES.Options;
+					}
+
+					var A = this.MenuAccess;
+					var D = data.TMACES.split('');
+					var H = [];
+
+					if (D.length == 0) { // Ini untuk yang menu folder
+						this.$q.notify('no access for this data!!!');
+						formDetail.OpenForm = false;
+					}
+
+					for (var a in A) {  
+						for (var d in D) {  
+							if (A[a].value === D[d]) {
+								H.push(A[a]);
+							}
+						}
+					}
+					f.TAACES.Options = H;
+					this.detailFormAcess = false;
+
+				}
+			},
+			TBLUAMsave (mode) {
+				var formDetail = this.myForm.Forms['frmTBLUSR'].TBLUAM;
+				var f = this.myForm.Forms['frmTBLUAM'];
+				if(mode === '1') {
+					if (f.TAUSERIY.Value ==='') {
+						this.$q.notify('User harus diisi dulu!!!');						
+						formDetail.SaveForm = false;
+						return;
+					}
+					this.LoadHakAksesUser(f.TAUSERIY.Value)
+					formDetail.SaveForm = false;
+				} else if (mode === '2') {
+					// this.detailFormAcess = true
+					// this.frmSHLINE.BBDESC.ReadOnly = true
+				}
+			},
+			async LoadHakAksesUser(TAUSERIY) {
+
+				var GridDetail = this.myForm.Forms['frmTBLUSR'].TBLUAM;
+				await weAuth.loading.loadData( this , 'Refreshing Your Data, Please Wait...', '', '', 
+					async () => {
+						var Saya = this;
+						var params = new Object;
+							params['Controller'] = 'cTBLUSR';
+							params['Method'] = 'LoadTBLUAM';
+							params['TUUSERIY'] = TAUSERIY;
+
+							// console.log('this.myForm : ',this.myForm);
+							// console.log('this.frmID : ',this.frmID);
+						this.loading = true;
+						await this.doAppCall({ 
+									params: params, 
+									frmID: this.frmID, 
+									id: 'Forms.frmTBLUSR.TBLUAM.Grid'
+								}).then( function(response) {
+										Saya.loading = false;
+										GridDetail.Value = response.Data.data;
+										GridDetail.grdModalBack();
+										// console.log('response',response);
+										// console.log('GridDetail',GridDetail);
+								}).catch( function(response) {
+										Saya.$q.notify('Fail loading grid...' + response);
+								});
+
+					}
+				);
+
+		    },	 
 		},			
 		data () {
 			return {
   				frmID: 'TBLDSCXXXX',
+  				detailFormAcess: false,
+  				MenuAccess : [],
 	      	}
 	    }
 	}

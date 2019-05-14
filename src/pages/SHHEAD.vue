@@ -168,7 +168,7 @@
 				f.SLTOTL.Value = f.SLQTYS.Value * f.SLHARG.Value;
 
 			},
-			SHLINEshow (mode) {
+			SHLINEshow ({mode, data}) {
 				var f = this.myForm.Forms['frm'+this.frmID]
 				// console.log('f.SHBPNOIY',f.SHBPNOIY);
 				if(mode === '1') {
