@@ -7,6 +7,7 @@
 						<div class="round" style="border-style: solid; border-color: white; width: 300px;" >
 
 							<q-card-title class="bg-primary text-white">
+
 								<div class="row">
 									<div class="col-3" />
 									<div class="col-6 text-center">
@@ -69,7 +70,7 @@
 										label="Login" 
 										@click="BtnLogin" />
 								<div class="q-mb-md">
-									<div class="text-center q-caption text-weight-medium" v-html="copyright" />
+									<div style="font-size: 13px" class="text-center" v-html="version" />
 								</div>								
 							</q-card-actions>
 
@@ -113,6 +114,7 @@
 		},			
 		computed: {
 			...mapGetters('App',['getAppName','getAppDescription','getAppCopyright','getAppVersion']),
+
 			logoVariable () {
 				return logoData[this.logo];
 			},			
@@ -158,7 +160,7 @@
 		data () {
 			return {
 				logos: Object.keys(logoData),
-				logo: 'Molectron', // Keytronic, Digitalizer, Molectron
+				logo: 'Molectron', // Keytronic, Digitalizer, Molectron, WilEdi
 				login: {
 					USER: '',
 					PASS: '',
