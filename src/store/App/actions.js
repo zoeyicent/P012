@@ -451,10 +451,13 @@ export function doAppFillObjectValue ({commit, state}, {frmID, frmObj, hasil}) {
 }
 
 export async function doAppFillObject ({commit, state, dispatch}, {frmID, frmObj, method, mode, dataParams}) {
+    // console.log('action - doAppFillObject - dataParams', dataParams.AppName);
     var params = new Object;
         params = dataParams;
         params['Controller'] = 'c' + frmID;
         params['Method'] = method === '' ? 'FillForm' : method;
+    // console.log('action - doAppFillObject - dataParams', dataParams)
+    // console.log('action - doAppFillObject', params)
     const Hasil = await weApi.fnRequestData (params, '');
     
     if (!Hasil.success) {
@@ -464,6 +467,7 @@ export async function doAppFillObject ({commit, state, dispatch}, {frmID, frmObj
         return Hasil;
     }
 
+    // console.log('action - doAppFillObject', Hasil);
     dispatch('doAppFillObjectValue', { frmID:frmID, 
                                        frmObj:frmObj, 
                                        hasil:Hasil.data} );

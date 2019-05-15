@@ -107,7 +107,7 @@
 		computed: {
 	      	...mapGetters('App',['getAppForms']),
 			myForm() {
-				console.log('Masuk myForm TBLMNU');
+				console.log('Masuk myForm ' + this.frmID);
 				return this.getAppForms[this.frmID];
 				// return [];
 			},			

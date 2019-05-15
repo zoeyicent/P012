@@ -226,11 +226,29 @@
 	    methods: {
 			...mapMutations('App',['setAppForms_Data']),
 			CommandClick: function (mode, HakAkses, Rows) {
+				// console.log('ObjGrid_D - myGrid',this.myGrid);
+				// console.log('ObjGrid_D',Rows[this.myGrid.Grid.Keys]);
+
+// =================================================================
+// Begin Note 2019 05 15 
+// Tidak Pakai Sintax dibawah ini
+// Karena ke bentur dengan Request URL Too Long
+				// this.setAppForms_Data({
+				// 	id: this.frmID, 
+		  //           path: this.subFrmID+'Grid.RowData', 
+		  //           data: Rows
+				// });
+// End	Note 2019 05 15
+// =================================================================
+
+				var data =  new Object 
+					data[this.myGrid.Grid.Keys] = Rows[this.myGrid.Grid.Keys];
+
 				this.setAppForms_Data({
 					id: this.frmID, 
 		            path: this.subFrmID+'Grid.RowData', 
-		            data: Rows
-				});
+		            data: data
+				});				
 				this.getAppForms[this.frmID].CommandClick(mode);
 				return '';
 			},

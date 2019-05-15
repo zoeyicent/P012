@@ -15,8 +15,11 @@ export default {
 		*/		
 		var DataEncrypt = Data;
 		    DataEncrypt = btoa("WilEdi2019") + Data;
+		// console.log(DataEncrypt);	
 		    DataEncrypt = btoa(DataEncrypt);
+		// console.log(DataEncrypt);	
 		    DataEncrypt = DataEncrypt.split('').reverse().join('');
+		// console.log(DataEncrypt.length);	
 		var P = (DataEncrypt.length/2);
 		var D1 = DataEncrypt.slice(0, P).split('');	
 		var D2 = DataEncrypt.slice(P).split('');	
@@ -25,7 +28,8 @@ export default {
     		for(i=0;i<P;i++) {
     			E.push(D1[i] + D2[i]);
     		}         
-		    DataEncrypt = E.join('');		
+		    DataEncrypt = E.join('');	
+		// console.log(DataEncrypt);	
 		return DataEncrypt;
 		// console.log(btoa(a));
 		// console.log(atob(btoa(a)));
@@ -92,11 +96,14 @@ ada di masing masing module yang memanggil fnRequestData
 		DataParms['AppDateInfo'] = localStorage.getItem(AppName+'-dateInfo');
 		DataParms['AppName'] = AppName;
 
+ 		// console.log('api.fnRequestData - DataParms', DataParms);
+
 		var params = this.fnEncryptParam(DataParms); 
         var Address = process.env.API + 'getData';
 
 
 		try {
+        	// console.log('api.fnRequestData - params', params);		
 			const response = await axios.get(Address, { params: params, withCredentials: true } )	
         	// console.log('api.fnRequestData', this.fnDecrypt(response.data));		
 			return this.fnDecrypt(response.data, '');
