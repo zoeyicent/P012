@@ -8,23 +8,26 @@
   	<div v-show="myForm.Properties.layout==='1'">
 		<ObjGrid :frmID="frmID" />
   	</div>
-  	<div v-show="myForm.Properties.layout==='2'" class="text-left q-ma-xs round dense row">
-  		<div class="col-xs-12 col-md-6 q-ma-xs">
-			<ObjForm 
-				v-for="(Obj, index) in myForm.Forms['frm'+frmID]" 
-				:pObj="Obj" :pFrmObj="'frm'+frmID"
-				:key="index"
-				v-if="Obj.Panel === 'Panel1' ? true : false"
-			/>  	
+  	<div 
+  		 v-if="myObj === undefined ? false : true"
+  		 v-show="myForm.Properties.layout==='2'" 
+  		 class="text-left q-ma-xs round dense row">
+
+  		<div class="col-xs-12 col-md-11 q-ma-xs row">
+	  		<div class="col-xs-12 col-md-8">
+				<ObjForm :pObj="myObj.SHBPNOIY" :pFrmObj="'frm'+frmID" />
+	  		</div>
+	  		<div class="col-xs-12 col-md-4">
+				<ObjForm :pObj="myObj.SHSHNOIY" :pFrmObj="'frm'+frmID" />
+				<ObjForm :pObj="myObj.SHSHNO" :pFrmObj="'frm'+frmID" />
+				<ObjForm :pObj="myObj.SHDATE" :pFrmObj="'frm'+frmID" />
+	  		</div>
   		</div>
   		<div class="col-xs-12 col-md-11 q-ma-xs">
 			<ObjForm 
-				v-for="(Obj, index) in myForm.Forms['frm'+frmID]" 
-				:pObj="Obj" :pFrmObj="'frm'+frmID"
-				:key="index"
+				:pObj="myObj.SHLINE" :pFrmObj="'frm'+frmID"
 				@eCallDetailForm="SHLINEshow"
 				@eSaveDetailForm="SHLINEsave"
-				v-if="Obj.Panel === 'Panel5' ? true : false"
 			>
 				<div 
 					slot="GridForm"
@@ -39,6 +42,14 @@
 				</div>				 	
 			</ObjForm>	
   		</div>
+  		<div class="col-xs-12 col-md-11 q-ma-xs row">
+	  		<div class="col-xs-12 col-md-8">
+				<ObjForm :pObj="myObj.SHREMK" :pFrmObj="'frm'+frmID" />
+	  		</div>
+	  		<div class="col-xs-12 col-md-4">
+				<ObjForm :pObj="myObj.SHTOTL" :pFrmObj="'frm'+frmID" />
+	  		</div>
+  		</div>  		 		
   		<!-- <div class="col-xs-12 col-md-5 q-ma-xs">
 			<ObjForm 
 				v-for="(Obj, index) in myForm.Forms['frm'+frmID]" 
@@ -86,7 +97,11 @@
 			myForm() {
 				return this.getAppForms[this.frmID];
 				// return [];
-			},			
+			},		
+			myObj() {
+				// console.log(this.frmID + ' myObj', this.myForm.Forms['frm'+this.frmID])
+				return this.myForm.Forms['frm'+this.frmID];
+			},					
 		},	
 		watch: {
 			'myForm.Forms.frmSHLINE.SLQTYS.Value': function (data) {

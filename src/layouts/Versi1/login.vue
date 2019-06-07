@@ -9,11 +9,11 @@
 							<q-card-title class="bg-primary text-white">
 
 								<div class="row">
-									<div class="col-3" />
-									<div class="col-6 text-center">
-										<svg id="logo" viewBox="0 0 483 483"
+									<div class="col-2" />
+									<div class="col-7 text-center">
+										<svg id="logo" viewBox="50 10 513 513"
 												style="enable-background:new 0 0 460 460; padding:5px 5px 5px 5px;"
-												xml:space="preserve" width="130px" height="130px"
+												xml:space="preserve" width="160px" height="160px"
 												v-html="logoVariable">
 										</svg>
 									</div>
@@ -160,7 +160,7 @@
 		data () {
 			return {
 				logos: Object.keys(logoData),
-				logo: 'Molectron', // Keytronic, Digitalizer, Molectron, WilEdi
+				logo: 'WilEdi', // Keytronic, Digitalizer, Molectron, WilEdi
 				login: {
 					USER: '',
 					PASS: '',

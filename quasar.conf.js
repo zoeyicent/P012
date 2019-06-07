@@ -30,6 +30,7 @@ module.exports = function (ctx) {
       env: ctx.dev
         ? { // so on dev we'll have
           API: JSON.stringify('http://localhost:9999/api/')
+          // API: JSON.stringify('http://localhost:8099/Project01/L01/api/')
           // API: JSON.stringify('http://172.30.9.32:8099/a5framework/lar/api/')
         }
         : { // and on build (production):
